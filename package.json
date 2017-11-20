@@ -1,0 +1,36 @@
+{
+  "name": "rt-map",
+  "version": "1.0.0",
+  "description": "Real time map manager",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ffis/rt-map.git"
+  },
+  "keywords": [
+    "real",
+    "time",
+    "map",
+    "leaflet"
+  ],
+  "author": "Loksly",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ffis/rt-map/issues"
+  },
+  "homepage": "https://github.com/ffis/rt-map#readme",
+  "dependencies": {
+    "archiver": "^2.1.0",
+    "express": "^4.16.2",
+    "express-fileupload": "^0.3.0",
+    "leaflet-rastercoords": "^1.0.2",
+    "python-shell": "^0.4.0",
+    "xml2js": "^0.4.19"
+  }
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Map</title>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+		<link rel="stylesheet" href="leaflet.css" />
+		<style>
+			html, body, #map {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color: #B0B0B0
+			}
+		</style>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script src="leaflet.js"></script>
+		<script src="rastercoords.js"></script>
+		<script>
+;(function (window) {
+		function downloadJSON(url, cb){
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+					if (xhr.status === 200) {
+						return cb(null, JSON.parse(xhr.responseText));
+					} else {
+						return cb(xhr);
+					}
+			};
+			xhr.send();
+		}
+
+		function getDetails(cb){
+			downloadJSON('map/tilemapresource.json', function(err, o){
+				if (typeof o !== 'object' || typeof o.TileMap !== 'object' || typeof o.TileMap.BoundingBox !== 'object' ||
+					typeof o.TileMap.BoundingBox[0] !== 'object' || typeof o.TileMap.BoundingBox[0].$ !== 'object'){
+					return cb({err: 'Not valid file'});
+				}
+
+				var obj = {
+					width: o.TileMap.BoundingBox[0].$.maxx - o.TileMap.BoundingBox[0].$.minx,
+					height: o.TileMap.BoundingBox[0].$.maxy - o.TileMap.BoundingBox[0].$.miny,
+					minZoom: 0,
+					maxZoom: o.TileMap.TileSets[0].TileSet.length - 1
+				};
+
+				cb(null, obj);
+			});
+		}
+
+		function init (mapid, details) {
+			var minZoom = details.minZoom;
+			var maxZoom = details.maxZoom;
+			var img = [details.width, details.height];
+
+			// create the map
+			var map = window.L.map(mapid, {
+				minZoom: minZoom,
+				maxZoom: maxZoom
+			});
+
+			var rc = new window.L.RasterCoords(map, img);
+			map.setView(rc.unproject([details.width / 2, details.height / 2]), maxZoom / 2);
+/*
+			window.L.control.layers({}, {
+	
+				'Polygon': layerPolygon(map, rc),
+				'Countries': layerCountries(map, rc),
+				'Bounds': layerBounds(map, rc, img),
+				'Info': layerGeo(map, rc)
+	
+			}).addTo(map);
+*/
+			window.L.tileLayer('./map/{z}/{x}/{y}.png', {
+				noWrap: true,
+				attribution: 'Map'
+			}).addTo(map);
+		}
+
+
+		getDetails(function(err, details){
+
+			init('map', details);
+		});
+
+		//init('map');
+	}(window));
+
+		</script>
+	</body>
+</html>

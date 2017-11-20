@@ -9,6 +9,27 @@ Real time map manager
 * Python-gdal 1.11 or greater ( sudo apt-get install python-gdal )
 * Git 2.7.4 or greater (sudo apt-get install git)
 
+## Installation
+
+```bash
+git clone https://github.com/ffis/rt-map
+cd rt-map
+npm install
+vim config.json  # config default port and temporary directory
+npm test
+```
+
+If all the tests have passed then you may run the application.
+
+## Run the application
+
+```bash
+node .
+```
+
+Then open your browser (a recent one). The default URL is: http://localhost:[config.json.port]/
+where config.json.port is the parameter you may have changed on _config.json_ file.
+
 
 ## Copyright notes:
 

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="maprt">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Loksly">
+		<title>MAP-RT editor</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<style>
+			.my-drop-zone { border: dotted 3px lightgray; }
+      .nv-file-over { border: dotted 3px red; }
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">MAP-RT</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Inicio <span class="sr-only">(current)</span></a></li>
+						<li><a href="#">Link</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div class="container-fluid">
+			<form ref='uploadForm' id='uploadForm' action='/api/upload' method='post' encType="multipart/form-data">
+        <input type="file" name="map" />
+        <input type='submit' value='Generar tiles' />
+    	</form>
+
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js" integrity="sha256-zBy1l2WBAh2vPF8rnjFMUXujsfkKjya0Jy5j6yKj0+Q=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-resource.min.js" integrity="sha256-J9EYt6krcoClMPGCdI0BA5vhMVHU/lu9vSnhbx0vfAI=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-file-upload/2.5.0/angular-file-upload.min.js" integrity="sha256-q2NwSnlRnwmBWxaTqnvAIhI02QSctA9asRD9MiHK7Ek=" crossorigin="anonymous"></script>
+		<script src="script.js"></script>
+	</body>
+</html>
