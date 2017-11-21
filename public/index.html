@@ -7,12 +7,15 @@
 		<meta name="author" content="Loksly">
 		<title>MAP-RT editor</title>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link href="/leaflet.css" rel="stylesheet" />
 		<style>
 			.my-drop-zone { border: dotted 3px lightgray; }
-      .nv-file-over { border: dotted 3px red; }
+			.nv-file-over { border: dotted 3px red; }
+			html, body, .mapcontainer, #map{ width:100%; height:100%; margin:0; padding:0; background-color: #B0B0B0}
+			#map.editor { cursor: crosshair }
 		</style>
 	</head>
-	<body>
+	<body ng-controller="Dashboard">
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
@@ -22,28 +25,54 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="#">MAP-RT</a>
+					<a class="navbar-brand" href="#">MAP-RT editor</a>
 				</div>
 
-				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div ng-hide="mapid" class="btn btn-primary pull-right" style="margin-top:6px" ng-model="file" ngf-accept="'image/*'" ngf-select="upload($file)">Upload a jpeg image</div>
+				<div ng-show="mapid" class="btn btn-default pull-right" style="margin-top:6px" ng-click="download()">Download map</div>
+
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Inicio <span class="sr-only">(current)</span></a></li>
-						<li><a href="#">Link</a></li>
+						<li ng-click="setSection(section)" ng-repeat="section in sections" ng-class="{'active': section.id === selectedSection}">
+							<a href="#">{{section.id}}
+								<span ng-if="section.id === selectedSection" class="sr-only">(current)</span>
+							</a>
+						</li>
+						<li ng-show="mapid">
+							<button style="margin-top:6px" class="btn" ng-class="{'btn-primary': editor === 'rectangle', 'btn-default': editor !== 'rectangle'}" ng-click="addRectangle()">Rectángulo</button>
+							<button style="margin-top:6px" class="btn" ng-class="{'btn-primary': editor === 'polygon', 'btn-default': editor !== 'polygon'}" ng-click="addPolygon()">Polígono</button>
+						</li>
+						<li>
+							<input type="number" class="form-control" style="margin:6px; width:4em; display:inline" min="3" max="10" ng-model="numberofsides" />
+						</li>
 					</ul>
 				</div>
 			</div>
 		</nav>
-		<div class="container-fluid">
-			<form ref='uploadForm' id='uploadForm' action='/api/upload' method='post' encType="multipart/form-data">
-        <input type="file" name="map" />
-        <input type='submit' value='Generar tiles' />
-    	</form>
-
+		<div class="container-fluid mapcontainer">
+				<div id="map" ng-class="{'editor': editor}" ng-hide="selectedSection === 'Sprites'"></div>
+				<div ng-show="selectedSection === 'Sprites'">
+					<div class="col-md-12" style="margin-top:2em">
+						<table class="table table-hover table-bordered table-striped">
+							<tbody>
+								<tr ng-repeat="s in sprites">
+									<th>{{s|json}}</th>
+								</tr>
+							</tbody>
+						</table>
+						<textarea class="form-control" ng-model="spritesLoader"></textarea>
+						<button class="btn btn-default" ng-click="loadSprites()">Load from textarea</button>
+						<button class="btn btn-default" ng-click="sync()">Update textarea</button>
+						<button class="btn btn-primary" ng-click="saveSprites()">Send sprites to server</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js" integrity="sha256-zBy1l2WBAh2vPF8rnjFMUXujsfkKjya0Jy5j6yKj0+Q=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-resource.min.js" integrity="sha256-J9EYt6krcoClMPGCdI0BA5vhMVHU/lu9vSnhbx0vfAI=" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-file-upload/2.5.0/angular-file-upload.min.js" integrity="sha256-q2NwSnlRnwmBWxaTqnvAIhI02QSctA9asRD9MiHK7Ek=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload-all.min.js" integrity="sha256-LrZq3efIkFX0BooX7x/rjWyYDvMKfFV2HJpy6HBw7cE=" crossorigin="anonymous"></script>
+		<script src="leaflet.js"></script>
+		<script src="rastercoords.js"></script>
 		<script src="script.js"></script>
 	</body>
 </html>

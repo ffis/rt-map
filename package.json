@@ -27,6 +27,7 @@
   "homepage": "https://github.com/ffis/rt-map#readme",
   "dependencies": {
     "archiver": "^2.1.0",
+    "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-fileupload": "^0.3.0",
     "leaflet-rastercoords": "^1.0.2",
