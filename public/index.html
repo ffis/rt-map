@@ -75,7 +75,7 @@
 									<div class="form-group col-sm-6">
 										<label class="col-sm-4 text-right" for="title">Title:</label>
 										<div class="col-sm-8">
-											<input type="text" class="form-control" id="title" placeholder="Title" ng-model="spritesconfig.title" />
+											<input type="text" class="form-control" id="title" placeholder="Title" ng-model="featurecollection.title" />
 										</div>
 									</div>
 									<div class="form-group col-sm-3">
@@ -97,7 +97,8 @@
 						<table class="table table-hover table-bordered table-striped">
 							<thead>
 								<tr>
-									<th>ID</th>
+									<th>ID <input style="float:right; display:inline; width: 50%" ng-model="filter.properties.id" class="form-control" />
+									</th>
 									<th>Type</th>
 									<th>Points</th>
 									<th></th>
@@ -106,16 +107,16 @@
 							<tfoot>
 								<tr>
 									<th class="text-center" colspan="3">
-										Number of sprites: {{spritesconfig.sprites.length}}
+										Number of sprites: {{featurecollection.features.length}}
 									</th>
 									<th class="text-center"></th>
 								</tr>
 							</tfoot>
 							<tbody>
-								<tr ng-repeat="s in spritesconfig.sprites">
-									<th><input class="form-control" type="text" ng-model="s.id" /></th>
-									<td class="text-center">{{s.type}}</td>
-									<td class="text-center">{{s.points}}</td>
+								<tr ng-repeat="s in featurecollection.features | filter: filter">
+									<th><input class="form-control" type="text" ng-model="s.properties.id" /></th>
+									<td class="text-center">{{s.geometry.type}}</td>
+									<td class="text-center">{{s.geometry.coordinates}}</td>
 									<td class="text-center">
 										<button class="btn btn-danger" ng-click="deleteSprite(s)" title="Delete this sprite">Delete</button>
 									</td>

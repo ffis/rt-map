@@ -62,22 +62,24 @@
 							return res.status(500).json(err4);
 						}
 
+						const featureCollection = {id: dir, type: 'FeatureCollection', 'features': [], 'properties': {title: ''}};
+
 						fs.writeFileSync(path.join(directory, 'tilemapresource.json'), JSON.stringify(result), 'utf8');
-						fs.writeFileSync(path.join(directory, 'sprites.json'), JSON.stringify({id: dir, title: '', sprites: []}), 'utf8');
+						fs.writeFileSync(path.join(directory, 'featurecollection.json'), JSON.stringify(featureCollection, null, "\t"), 'utf8');
 
 						res.json({'id': dir});
 					});
 				});
 			});
 		})
-		.use('/api/map/:id/sprites.json', bodyParser.json()).post('/api/map/:id/sprites.json', function(req, res){
+		.use('/api/map/:id/featurecollection.json', bodyParser.json()).post('/api/map/:id/featurecollection.json', function(req, res){
 			const directory = path.join(config.datadir, String(parseInt(req.params.id, 10)));
-			const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-			fs.writeFileSync(path.join(directory, 'sprites.json'), body, 'utf8');
+			const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body, null, "\t");
+			fs.writeFileSync(path.join(directory, 'featurecollection.json'), body, 'utf8');
 
 			res.json(body);
 		})
-		.get('/api/map/:id/**', function(req, res){
+		.get('/api/map/:id/**', function(req, res, next){
 			const id = parseInt(req.params.id, 10),
 				directory = path.join(config.datadir, String(id)),
 				prefix = '/api/map/' + id + '/';
@@ -85,7 +87,18 @@
 			if (parseInt(req.params.id, 10) > 0){
 				const filename = req.originalUrl.replace(prefix, '');
 
-				res.sendFile(filename, {root: directory});
+
+				fs.stat(path.join(directory, filename), function(err, stats){
+					if (err){
+						return next();
+					}
+					if (stats.isFile()){
+						return res.sendFile(filename, {root: directory});
+					}
+
+					next();
+				});
+
 			} else {
 				res.status(404).send('Not found');
 			}
@@ -109,6 +122,7 @@
 						zip.file(path.join(__dirname, 'node_modules/leaflet/dist/leaflet.js'), {name: 'leaflet.js'});
 						zip.file(path.join(__dirname, 'node_modules/leaflet/dist/leaflet.css'), {name: 'leaflet.css'});
 						zip.file(path.join(__dirname, 'public/template/index.html'), {name: 'index.html'});
+						zip.file(path.join(__dirname, 'public/template/script.js'), {name: 'script.js'});
 						zip.directory(directory, 'map');
 						zip.finalize();
 					} else {

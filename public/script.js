@@ -2,8 +2,15 @@
 (function(angular, window){
 	'use strict';
 
-	function randomString(){
-		return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+	function styleByFeature(){
+		return {
+			fillColor: '#FC4E2A',
+			weight: 2,
+			opacity: 1,
+			color: 'white',
+			dashArray: '3',
+			fillOpacity: 0.7
+		};
 	}
 
 	angular.module('maprt', ['ngResource', 'ngFileUpload'
@@ -11,8 +18,8 @@
 		return $resource('/api/config');
 	}]).factory('TileMapResource', ['$resource', function($resource){
 		return $resource('/api/map/:id/tilemapresource.json', {id: '@id'});
-	}]).factory('Sprites', ['$resource', function($resource){
-		return $resource('/api/map/:id/sprites.json', {id: '@id'});
+	}]).factory('FeatureCollection', ['$resource', function($resource){
+		return $resource('/api/map/:id/featurecollection.json', {id: '@id'});
 	}]).config(['$locationProvider', function($locationProvider){
 		$locationProvider.html5Mode({
 			enabled: true,
@@ -21,9 +28,14 @@
 	}]).run(['$rootScope', 'Config', function($rootScope, Config){
 		$rootScope.config = Config.get();
 
-	}]).controller('Dashboard', ['$scope', '$log', '$window', '$q', '$location', 'Upload', 'TileMapResource', 'Sprites',
-		function($scope, $log, $window, $q, $location, Upload, TileMapResource, Sprites){
+	}]).controller('Dashboard', ['$scope', '$log', '$window', '$q', '$location', 'Upload', 'TileMapResource', 'FeatureCollection',
+		function($scope, $log, $window, $q, $location, Upload, TileMapResource, FeatureCollection){
 
+			var coords = [],
+				map,
+				rc;
+
+			$scope.filter = {properties: {id: ''}};
 			$scope.newspritename = '';
 			$scope.sections = [{id: 'Start'}, {id: 'Details'}];
 			$scope.selectedSection = 'Start';
@@ -38,10 +50,33 @@
 				}
 			};
 
-			var impar = false,
-				coords = [],
-				map,
-				rc;
+			var featuresLayer = window.L.geoJSON([], {
+				style: styleByFeature,
+				coordsToLatLng: function (coordinates) {
+					if (Array.isArray(coordinates[0])){
+						return coordinates.map(function(c){
+							return rc.unproject(c);
+						});
+					}
+
+					return rc.unproject(coordinates);
+				},
+				onEachFeature: function (feature, layer) {
+					if (feature.properties && feature.properties.id) {
+						layer.bindPopup(feature.properties.id);
+					}
+				},
+				pointToLayer: function (feature, latlng) {
+					return window.L.circleMarker(latlng, {
+						radius: 8,
+						fillColor: '#800080',
+						color: '#D107D1',
+						weight: 1,
+						opacity: 1,
+						fillOpacity: 0.8
+					});
+				}
+			});
 
 			$scope.numberofsides = 4;
 			$scope.layers = [];
@@ -51,7 +86,7 @@
 			$scope.addPoint = noop;
 
 			$scope.addSprite = function(s){
-				$scope.spritesconfig.sprites.push(s);
+				$scope.featurecollection.features.push(s);
 				$scope.sync();
 			};
 
@@ -60,12 +95,12 @@
 					map.removeLayer(layer);
 				});
 				$scope.layers = [];
-				$scope.spritesconfig.sprites.forEach($scope.addToSpriteMap);
+				$scope.featurecollection.features.forEach($scope.addToSpriteMap);
 			};
 
 			$scope.deleteSprite = function(s){
-				if ($scope.spritesconfig.sprites.indexOf(s) >= 0){
-					$scope.spritesconfig.sprites.splice($scope.spritesconfig.sprites.indexOf(s), 1);
+				if ($scope.featurecollection.features.indexOf(s) >= 0){
+					$scope.featurecollection.features.splice($scope.featurecollection.features.indexOf(s), 1);
 					$scope.sync();
 					$scope.redrawSprites();
 				}
@@ -76,39 +111,39 @@
 				map.addLayer(layer);
 			};
 
-			$scope.addToSpriteMap = function(sprite){
-				var points = sprite.points.map(function (point) {
-					return rc.unproject([point.x, point.y]);
-				});
-				var layer = points.length === 2 ? window.L.rectangle([points]) : window.L.polygon([points]);
-				layer.bindPopup(sprite.id);
-				$scope.addLayer(layer);
+			$scope.addToSpriteMap = function(feature){
+				featuresLayer.addData(feature);
 			};
 
 			function addRectangle(rectangle){
-				var sprite = {id: $scope.newspritename, type: 'rectangle', points: rectangle};
+				var sprite = {type: 'Feature', geometry: {type: 'Polygon', coordinates: [rectangle]}, properties: {id: $scope.newspritename}};
 				$scope.addSprite(sprite);
 				$scope.addToSpriteMap(sprite);
 			}
-
 			function addPolygon(polygon){
-				var sprite = {id: $scope.newspritename, type: 'polygon', points: polygon};
+				var sprite = {type: 'Feature', geometry: {type: 'Polygon', coordinates: [polygon]}, properties: {id: $scope.newspritename}};
 				$scope.addSprite(sprite);
 				$scope.addToSpriteMap(sprite);
 			}
 
 			function addPolygonPoint(latlng){
-				coords.push(latlng);
+				coords.push([latlng.x, latlng.y]);
 				if (coords.length === parseInt($scope.numberofsides, 10)){
+					coords.push(coords[0]);
 					addPolygon(coords);
 					coords = [];
 				}
 			}
 
 			function addRectanglePoint(latlng){
-				coords.push(latlng);
+				coords.push([latlng.x, latlng.y]);
 				if (coords.length === 2){
-					addRectangle(coords);
+					//change: [[x1, y1],[x2], [y2]]
+					//to: [[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]
+					const x1 = coords[0][0], y1 = coords[0][1],
+						x2 = coords[1][0], y2 = coords[1][1];
+
+					addRectangle([[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]);
 					coords = [];
 				}
 			}
@@ -164,11 +199,13 @@
 					noWrap: true,
 					attribution: 'Map'
 				}).addTo(map);
+
+				featuresLayer.addTo(map);
 				map.on('click', onMapClick);
 			};
 
 			$scope.loadMap = function(id){
-				var loads = [Sprites.get({id: id}), TileMapResource.get({id: id})];
+				var loads = [FeatureCollection.get({id: id}), TileMapResource.get({id: id})];
 				$q.all(loads.map(function(o){ return o.$promise; })).then(function(){
 
 					var o = loads[1];
@@ -182,13 +219,13 @@
 						maxZoom: o.TileMap.TileSets[0].TileSet.length - 1
 					};
 					$scope.mapInit(id, $scope.mapconfiguration);
-					$scope.spritesconfig = loads[0];
-					$scope.spritesconfig.sprites.forEach($scope.addToSpriteMap);
+					$scope.featurecollection = loads[0];
+					$scope.featurecollection.features.forEach($scope.addToSpriteMap);
 				});
 			};
 
 			$scope.sync = function(){
-				var newSave = new Sprites($scope.spritesconfig);
+				var newSave = new FeatureCollection($scope.featurecollection);
 				newSave.$save();
 			};
 
