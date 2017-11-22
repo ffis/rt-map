@@ -35,7 +35,7 @@
 			const file = req.files.map;
 			const now = new Date(),
 				dir = String(now.getTime()),
-				directory = path.join(config.tmpdir, dir),
+				directory = path.join(config.datadir, dir),
 				filename = path.join(directory, 'original');
 
 			fs.mkdirSync(directory);
@@ -63,7 +63,7 @@
 						}
 
 						fs.writeFileSync(path.join(directory, 'tilemapresource.json'), JSON.stringify(result), 'utf8');
-						fs.writeFileSync(path.join(directory, 'sprites.json'), JSON.stringify([]), 'utf8');
+						fs.writeFileSync(path.join(directory, 'sprites.json'), JSON.stringify({id: dir, title: '', sprites: []}), 'utf8');
 
 						res.json({'id': dir});
 					});
@@ -71,7 +71,7 @@
 			});
 		})
 		.use('/api/map/:id/sprites.json', bodyParser.json()).post('/api/map/:id/sprites.json', function(req, res){
-			const directory = path.join(config.tmpdir, String(parseInt(req.params.id, 10)));
+			const directory = path.join(config.datadir, String(parseInt(req.params.id, 10)));
 			const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
 			fs.writeFileSync(path.join(directory, 'sprites.json'), body, 'utf8');
 
@@ -79,7 +79,7 @@
 		})
 		.get('/api/map/:id/**', function(req, res){
 			const id = parseInt(req.params.id, 10),
-				directory = path.join(config.tmpdir, String(id)),
+				directory = path.join(config.datadir, String(id)),
 				prefix = '/api/map/' + id + '/';
 
 			if (parseInt(req.params.id, 10) > 0){
@@ -92,7 +92,7 @@
 		})
 		.get('/api/download/:id', function(req, res){
 			if (parseInt(req.params.id, 10) > 0){
-				const directory = path.join(config.tmpdir, String(parseInt(req.params.id, 10)));
+				const directory = path.join(config.datadir, String(parseInt(req.params.id, 10)));
 				fs.stat(directory, function(err, stats){
 					if (err){
 						res.status(404).send('Not found');

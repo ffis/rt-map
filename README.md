@@ -15,7 +15,7 @@ Real time map manager
 git clone https://github.com/ffis/rt-map
 cd rt-map
 npm install
-vim config.json  # config default port and temporary directory
+vim config.json  # config default port and datadir directory
 npm test
 ```
 
