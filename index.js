@@ -16,7 +16,12 @@
 		throw new Error('Utility not properly configured on config.json file');
 	}
 
+	if (typeof config.datadir !== 'string'){
+		throw new Error('Data directory not properly configured on config.json file');
+	}
+
 	const staticResources = {
+		'jquery.min.js': 'node_modules/jquery/dist/jquery.min.js',
 		'rastercoords.js': 'node_modules/leaflet-rastercoords/rastercoords.js',
 		'leaflet.js': 'node_modules/leaflet/dist/leaflet.js',
 		'leaflet.css': 'node_modules/leaflet/dist/leaflet.css'
@@ -45,7 +50,7 @@
 				}
 
 				const args = ['-l', '-p', 'raster', '-w', 'none', filename, directory];
-				logger.log(args);
+
 				PythonShell.run(config.utility, {
 					mode: 'text',
 					scriptPath: './lib',
@@ -118,11 +123,17 @@
 						});
 						const zip = archiver('zip', {'zlib': {'level': 9}});
 						zip.pipe(res);
+
+						zip.file(path.join(__dirname, 'node_modules/jquery/dist/jquery.min.js'), {name: 'jquery.min.js'});
 						zip.file(path.join(__dirname, 'node_modules/leaflet-rastercoords/rastercoords.js'), {name: 'rastercoords.js'});
 						zip.file(path.join(__dirname, 'node_modules/leaflet/dist/leaflet.js'), {name: 'leaflet.js'});
 						zip.file(path.join(__dirname, 'node_modules/leaflet/dist/leaflet.css'), {name: 'leaflet.css'});
+						zip.file(path.join(__dirname, 'node_modules/leaflet/dist/images/layers.png'), {name: 'images/layers.png'});
 						zip.file(path.join(__dirname, 'public/template/index.html'), {name: 'index.html'});
-						zip.file(path.join(__dirname, 'public/template/script.js'), {name: 'script.js'});
+						zip.file(path.join(__dirname, 'public/template/api.js'), {name: 'api.js'});
+						zip.file(path.join(__dirname, 'public/template/run.js'), {name: 'run.js'});
+						zip.file(path.join(__dirname, 'public/template/style.css'), {name: 'style.css'});
+
 						zip.directory(directory, 'map');
 						zip.finalize();
 					} else {

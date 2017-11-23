@@ -17,6 +17,21 @@
 			.details .form-horizontal label { margin-top:8px}
 			.navbar { margin-bottom: 0px;}
 			[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak { display: none !important; }
+			.spinner { margin: 100px auto; width: 50px; height: 40px; text-align: center; font-size: 10px; }
+			.spinner > div { background-color: #336; height: 100%; width: 6px; display: inline-block; -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out; animation: sk-stretchdelay 1.2s infinite ease-in-out;}
+			.spinner .rect2 {-webkit-animation-delay: -1.1s; animation-delay: -1.1s;}
+			.spinner .rect3 {-webkit-animation-delay: -1.0s; animation-delay: -1.0s;}
+			.spinner .rect4 {-webkit-animation-delay: -0.9s; animation-delay: -0.9s;}
+			.spinner .rect5 {-webkit-animation-delay: -0.8s; animation-delay: -0.8s;}
+
+			@-webkit-keyframes sk-stretchdelay {
+				0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+				20% { -webkit-transform: scaleY(1.0) }
+			}
+
+			@keyframes sk-stretchdelay {
+				0%, 40%, 100% { transform: scaleY(0.4); -webkit-transform: scaleY(0.4);	}  20% { transform: scaleY(1.0); -webkit-transform: scaleY(1.0);}
+			}
 		</style>
 	</head>
 	<body ng-controller="Dashboard" class="ng-cloak">
@@ -59,74 +74,82 @@
 			</div>
 		</nav>
 		<div class="container-fluid mapcontainer">
-				<div id="map" ng-class="{'editor': editor}" ng-hide="selectedSection === 'Details'"></div>
-
-				<div ng-show="selectedSection === 'Details'" style="margin-top:1em">
-					<div class="col-md-12" style="margin-top:1em">
-						<div class="row">
-							<div class="col-md-12">
-								<button class="btn btn-primary pull-right" ng-click="sync(); redrawSprites()">Send changes to server and refresh map</button>
-							</div>
+			<div id="map" ng-class="{'editor': editor}" ng-hide="selectedSection === 'Details'"></div>
+			<div ng-if="uploading" class="ng-cloak">
+				<div class="spinner">
+					<div class="rect1"></div>
+					<div class="rect2"></div>
+					<div class="rect3"></div>
+					<div class="rect4"></div>
+					<div class="rect5"></div>
+				</div>
+			</div>
+			<div ng-show="selectedSection === 'Details'" style="margin-top:1em">
+				<div class="col-md-12" style="margin-top:1em">
+					<div class="row">
+						<div class="col-md-12">
+							<button class="btn btn-primary pull-right" ng-click="sync(); redrawSprites()">Send changes to server and refresh map</button>
 						</div>
-						<div class="panel panel-default details" style="margin-top:1em">
-							<div class="panel-heading">Map description</div>
-							<div class="panel-body">
-								<form class="form-horizontal">
-									<div class="form-group col-sm-6">
-										<label class="col-sm-4 text-right" for="title">Title:</label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" id="title" placeholder="Title" ng-model="featurecollection.title" />
-										</div>
-									</div>
-									<div class="form-group col-sm-3">
-										<label class="col-sm-6 text-right" for="width">Width:</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control text-right" id="width" placeholder="Width" ng-model="mapconfiguration.width" disabled="disabled" />
-										</div>
-									</div>
-									<div class="form-group col-sm-3">
-										<label class="col-sm-6 text-right" for="height">Height:</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control text-right" id="height" placeholder="Height" ng-model="mapconfiguration.height" disabled="disabled" />
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-
-						<table class="table table-hover table-bordered table-striped">
-							<thead>
-								<tr>
-									<th>ID <input style="float:right; display:inline; width: 50%" ng-model="filter.properties.id" class="form-control" />
-									</th>
-									<th>Type</th>
-									<th>Points</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tfoot>
-								<tr>
-									<th class="text-center" colspan="3">
-										Number of sprites: {{featurecollection.features.length}}
-									</th>
-									<th class="text-center"></th>
-								</tr>
-							</tfoot>
-							<tbody>
-								<tr ng-repeat="s in featurecollection.features | filter: filter">
-									<th><input class="form-control" type="text" ng-model="s.properties.id" /></th>
-									<td class="text-center">{{s.geometry.type}}</td>
-									<td class="text-center">{{s.geometry.coordinates}}</td>
-									<td class="text-center">
-										<button class="btn btn-danger" ng-click="deleteSprite(s)" title="Delete this sprite">Delete</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
 					</div>
+					<div class="panel panel-default details" style="margin-top:1em">
+						<div class="panel-heading">Map description</div>
+						<div class="panel-body">
+							<form class="form-horizontal">
+								<div class="form-group col-sm-6">
+									<label class="col-sm-4 text-right" for="title">Title:</label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" id="title" placeholder="Title" ng-model="featurecollection.title" />
+									</div>
+								</div>
+								<div class="form-group col-sm-3">
+									<label class="col-sm-6 text-right" for="width">Width:</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control text-right" id="width" placeholder="Width" ng-model="mapconfiguration.width" disabled="disabled" />
+									</div>
+								</div>
+								<div class="form-group col-sm-3">
+									<label class="col-sm-6 text-right" for="height">Height:</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control text-right" id="height" placeholder="Height" ng-model="mapconfiguration.height" disabled="disabled" />
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<table class="table table-hover table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>ID <input style="float:right; display:inline; width: 50%" ng-model="filter.properties.id" class="form-control" />
+								</th>
+								<th>Type</th>
+								<th>Points</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th class="text-center" colspan="3">
+									Number of sprites: {{featurecollection.features.length}}
+								</th>
+								<th class="text-center"></th>
+							</tr>
+						</tfoot>
+						<tbody>
+							<tr ng-repeat="s in featurecollection.features | filter: filter">
+								<th><input class="form-control" type="text" ng-model="s.properties.id" /></th>
+								<td class="text-center">{{s.geometry.type}}</td>
+								<td class="text-center">{{s.geometry.coordinates}}</td>
+								<td class="text-center">
+									<button class="btn btn-danger" ng-click="deleteSprite(s)" title="Delete this sprite">Delete</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js" integrity="sha256-zBy1l2WBAh2vPF8rnjFMUXujsfkKjya0Jy5j6yKj0+Q=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-resource.min.js" integrity="sha256-J9EYt6krcoClMPGCdI0BA5vhMVHU/lu9vSnhbx0vfAI=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload-all.min.js" integrity="sha256-LrZq3efIkFX0BooX7x/rjWyYDvMKfFV2HJpy6HBw7cE=" crossorigin="anonymous"></script>

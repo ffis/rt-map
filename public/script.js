@@ -35,6 +35,7 @@
 				map,
 				rc;
 
+			$scope.uploading = false;
 			$scope.filter = {properties: {id: ''}};
 			$scope.newspritename = '';
 			$scope.sections = [{id: 'Start'}, {id: 'Details'}];
@@ -140,7 +141,7 @@
 				if (coords.length === 2){
 					//change: [[x1, y1],[x2], [y2]]
 					//to: [[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]
-					const x1 = coords[0][0], y1 = coords[0][1],
+					var x1 = coords[0][0], y1 = coords[0][1],
 						x2 = coords[1][0], y2 = coords[1][1];
 
 					addRectangle([[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]);
@@ -234,6 +235,7 @@
 			};
 
 			$scope.upload = function (file) {
+				$scope.uploading = true;
 				Upload.upload({
 					url: '/api/upload',
 					data: {map: file}

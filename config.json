@@ -1,6 +1,6 @@
  {
  	"port": 10101,
- 	"datadir": "/tmp",
+ 	"datadir": "data",
  	"clientconfig": {},
  	"utility": "gdal2tiles.py"
  }
