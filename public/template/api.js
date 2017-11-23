@@ -3,19 +3,23 @@ window.rtMapAPI = (function(window, jQuery){
 	var instance = null;
 
 	function rtMapAPI(){
-		this.geojson = null;		
 	}
 
 	rtMapAPI.prototype.setGeoJSON = function(geojson) {
 		this.geojson = geojson;
 	};
 
-	//this function runs when the map has been loaded before the data has been retrieved for the first time
+
+	rtMapAPI.prototype.setRefreshTimeout = function(cb) {
+		setInterval(cb, 3000);
+	};
+
+	//promise based, this function runs when the map has been loaded before the data has been retrieved for the first time
 	rtMapAPI.prototype.loadElements = function() {
 		return $.getJSON('testdata.json');
 	};
 
-	//this function runs when the map has been loaded before the data has been retrieved for the first time
+	//this function runs after the map has been loaded with all the sprites drawn
 	rtMapAPI.prototype.ready = function() {
 		
 	};

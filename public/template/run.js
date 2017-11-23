@@ -22,10 +22,6 @@
 		return jQuery.getJSON('map/featurecollection.json');
 	}
 
-	function getElements(){
-		return window.rtMapAPI.loadElements();
-	}
-
 	function layerFeatures(map, rc, featurecollection) {
 		var layer = window.L.geoJson(featurecollection, {
 			style: function(feature){
@@ -62,6 +58,25 @@
 		rtMapAPI.setGeoJSON(layer);
 		map.addLayer(layer);
 
+		window.rtMapAPI.setRefreshTimeout(function(){
+
+			window.rtMapAPI.loadElements().then(function(elements){
+				featurecollection.forEach(function(feature){
+					feature.properties.elements = [];
+
+					elements.forEach(function(element){
+						if (window.rtMapAPI.matches(element, feature.properties)){
+							feature.properties.elements.push(element);
+						}
+					});
+				});
+
+				Object.values(layer._layers).forEach(function(l){
+					layer.resetStyle(l);
+				});
+			});
+		});
+
 		return layer;
 	}
 
@@ -82,7 +97,7 @@
 				document.title = featurecollection.title.trim();
 			}
 
-			getElements().then(function(elements){
+			window.rtMapAPI.loadElements().then(function(elements){
 				featurecollection.features.forEach(function(feature){
 					feature.properties.elements = [];
 
@@ -91,13 +106,16 @@
 							feature.properties.elements.push(element);
 						}
 					});
-				})
+				});
 
 				window.L.control.layers({}, {
 					'Sprites': layerFeatures(map, rc, featurecollection.features)
 				}).addTo(map);
 
 				window.rtMapAPI.ready();
+
+			}, function(){
+				logger.error('Api loadElements not properly defined');
 			});
 		});
 	});
