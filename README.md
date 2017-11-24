@@ -2,6 +2,28 @@
 
 Real time map manager
 
+# Vagrant version 
+
+## Prerequisites
+* Vagrant 1.8.1 or greater
+
+## Instructions
+
+* Download Vagrant file
+* Run ```vagrant up```
+
+Then it will need about 4-5 minutes depending on your bandwidth. When it ends you can see a message like:
+
+```text
+Listening on port: 10101
+```
+
+Open your browser on http://localhost:10101/ and enjoy.
+
+
+# Local version
+
+If vagrant version is too hard to deploy then try with the local version.
 
 ## Prerequisites
 
