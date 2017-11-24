@@ -59,3 +59,8 @@ where config.json.port is the parameter you may have changed on _config.json_ fi
 This software uses a modified version of  gdal2tiles.py named gdal2tiles-leaflet, available under MIT license following this link: https://github.com/commenthol/gdal2tiles-leaflet This code belongs to:
 * Copyright (c) 2008, Klokan Petr Pridal
 * Copyright (c) 2010-2013, Even Rouault
+
+
+This software is available under MIT license:
+* Copyright (c) 2017, FFIS
+
