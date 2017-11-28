@@ -13,6 +13,9 @@ window.rtMapAPI = (function(window, jQuery){
 		this.map = map;
 	};
 
+	rtMapAPI.prototype.setVisible = function(elements){
+		this.elements = elements;
+	};
 
 	rtMapAPI.prototype.setRefreshTimeout = function(cb) {
 		setInterval(cb, 3000);

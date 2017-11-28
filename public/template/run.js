@@ -55,21 +55,24 @@
 			}
 		});
 
-		rtMapAPI.setGeoJSON(layer);
+		window.rtMapAPI.setGeoJSON(layer);
 		map.addLayer(layer);
 
 		window.rtMapAPI.setRefreshTimeout(function(){
 
 			window.rtMapAPI.loadElements().then(function(elements){
+				var visible = [];
 				featurecollection.forEach(function(feature){
 					feature.properties.elements = [];
 
 					elements.forEach(function(element){
 						if (window.rtMapAPI.matches(element, feature.properties)){
 							feature.properties.elements.push(element);
+							visible.push(element);
 						}
 					});
 				});
+				window.rtMapAPI.setVisible(visible);
 
 				Object.values(layer._layers).forEach(function(l){
 					layer.resetStyle(l);
@@ -96,6 +99,10 @@
 		getSprites().then(function(featurecollection){
 			if (typeof featurecollection.title === 'string' && featurecollection.title.trim() !== ''){
 				document.title = featurecollection.title.trim();
+			}
+
+			if (typeof featurecollection.properties === 'object' && typeof featurecollection.properties.title === 'string' && featurecollection.properties.title.trim() !== ''){
+				document.title = featurecollection.properties.title.trim();
 			}
 
 			window.rtMapAPI.loadElements().then(function(elements){
