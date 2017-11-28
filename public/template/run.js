@@ -87,6 +87,7 @@
 
 		var map = window.L.map('map', {minZoom: minZoom, maxZoom: maxZoom});
 
+		window.rtMapAPI.setMap(map);
 		var rc = new window.L.RasterCoords(map, img);
 		map.setView(rc.unproject([details.width / 2, details.height / 2]), maxZoom / 2);
 

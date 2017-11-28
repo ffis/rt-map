@@ -9,6 +9,10 @@ window.rtMapAPI = (function(window, jQuery){
 		this.geojson = geojson;
 	};
 
+	rtMapAPI.prototype.setMap = function(map) {
+		this.map = map;
+	};
+
 
 	rtMapAPI.prototype.setRefreshTimeout = function(cb) {
 		setInterval(cb, 3000);
