@@ -106,15 +106,18 @@
 			}
 
 			window.rtMapAPI.loadElements().then(function(elements){
+				var visible = [];
 				featurecollection.features.forEach(function(feature){
 					feature.properties.elements = [];
 
 					elements.forEach(function(element){
 						if (window.rtMapAPI.matches(element, feature.properties)){
 							feature.properties.elements.push(element);
+							visible.push(element);
 						}
 					});
 				});
+				window.rtMapAPI.setVisible(visible);
 
 				window.L.control.layers({}, {
 					'Sprites': layerFeatures(map, rc, featurecollection.features)
