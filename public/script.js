@@ -43,6 +43,8 @@
 			$scope.setSection = function(section){
 				$scope.selectedSection = section.id;
 			};
+//			$scope.autowidth = 0;
+//			$scope.autoheight = 0;
 
 			$scope.submit = function($event) {
 				$event.preventDefault();
@@ -137,7 +139,13 @@
 			}
 
 			function addRectanglePoint(latlng){
+
 				coords.push([latlng.x, latlng.y]);
+
+				if ($scope.autowidth && $scope.autoheight){
+					coords.push([latlng.x + $scope.autowidth, latlng.y + $scope.autoheight]);
+				}
+
 				if (coords.length === 2){
 					//change: [[x1, y1],[x2], [y2]]
 					//to: [[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]

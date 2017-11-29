@@ -17,6 +17,7 @@
 			.details .form-horizontal label { margin-top:8px}
 			.navbar { margin-bottom: 0px;}
 			[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak { display: none !important; }
+			.centered { position:absolute; top: 30%; left:50% }
 			.spinner { margin: 100px auto; width: 50px; height: 40px; text-align: center; font-size: 10px; }
 			.spinner > div { background-color: #336; height: 100%; width: 6px; display: inline-block; -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out; animation: sk-stretchdelay 1.2s infinite ease-in-out;}
 			.spinner .rect2 {-webkit-animation-delay: -1.1s; animation-delay: -1.1s;}
@@ -63,11 +64,15 @@
 								<button class="btn" ng-class="{'btn-primary': editor === 'polygon', 'btn-default': editor !== 'polygon'}" ng-click="addPolygon()">Polygon</button>
 							</div>
 						</li>
-						<li ng-show="mapid && selectedSection === 'Start'">
+						<li ng-show="mapid && selectedSection === 'Start' && editor">
+							<input type="text" title="Name" class="form-control" style="margin:6px; width:12em; display:inline" min="3" max="10" ng-model="newspritename" placeholder="name of the new sprite" />
+						</li>
+						<li ng-show="mapid && selectedSection === 'Start' && editor === 'polygon'">
 							<input type="number" title="Number of sides the polygon has" class="form-control" style="margin:6px; width:4em; display:inline" min="3" max="10" ng-model="numberofsides" />
 						</li>
-						<li ng-show="mapid && selectedSection === 'Start'">
-							<input type="text" title="Name" class="form-control" style="margin:6px; width:12em; display:inline" min="3" max="10" ng-model="newspritename" placeholder="name of the new sprite" />
+						<li ng-show="mapid && selectedSection === 'Start' && editor === 'rectangle'">
+							<input type="number" class="form-control" style="margin:6px; width:4em; display:inline" ng-model="autowidth" placeholder="w" />
+							<input type="number" class="form-control" style="margin:6px; width:4em; display:inline" ng-model="autoheight" placeholder="h" />
 						</li>
 					</ul>
 				</div>
@@ -75,7 +80,7 @@
 		</nav>
 		<div class="container-fluid mapcontainer">
 			<div id="map" ng-class="{'editor': editor}" ng-hide="selectedSection === 'Details'"></div>
-			<div ng-if="uploading" class="ng-cloak">
+			<div ng-if="uploading" class="ng-cloak centered">
 				<div class="spinner">
 					<div class="rect1"></div>
 					<div class="rect2"></div>
