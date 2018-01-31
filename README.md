@@ -107,8 +107,9 @@ It will work unless you delete the _data_ directory you have set on _config.json
 ### Phase 2
 
 After you uncompress the zip file you'll see a directory with several files.
-You may change what file you want to get your view but it should be enogh to keep your changes only on _api.js_
-file. This file has a default implementation. You have access to window, document, leafletmap and jQuery.
+You may change what file you want to get your view but it should be enough to
+keep your changes only on _api.js_ file.
+This file has a default implementation where you have access to window, document, leafletmap and jQuery objects.
 
 The main parts of the code you need to pay attention to are:
 
@@ -167,7 +168,7 @@ rtMapAPI.prototype.setRefreshTimeout = function(cb) {
 };
 ```
 
-_**ready** method_: This method runs when the map has been loaded before the data has been retrieved for the first time
+_**ready** method_: This method runs when the map has been loaded before the data has been retrieved for the first time.
 ```js
 rtMapAPI.prototype.ready = function() {
 	
