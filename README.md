@@ -1,6 +1,6 @@
 # RT-MAP
 
-Real time map manager
+Real time map manager.
 
 # Vagrant version 
 
@@ -65,7 +65,7 @@ or best say, in real time.
 We need:
 
 + Before start requisites:
-  - an indoor map in high resolution, lets say of at least 2000px of width and 1000px of height.
+  - an indoor map in high resolution, let's say of at least 2000px of width and 1000px of height.
   - a web service that provides real time information related to what beds are being used and
   some details of who does.
 + Phase 1:
@@ -85,35 +85,121 @@ Now that the application is listening on port 10101, open the browser on:
 You'll se a window with a blue button that enables you to "Upload an image".
 Press on it an choose your image.
 After uploading it gets some time to process it and render the map.
-When it ends you'll see the map and you zoom using the wheel of the mouse,
+When it ends you'll see the map and you can zoom using the wheel of the mouse,
 you may also pan clicking on the map using drag and drop.
+Most of this magic belongs to [leaflet](http://leafletjs.com/) team.
 
 Let's continue with the beds of the hospital service example and suppose your assets,
 have a rectangle figure. Press on _"Rectangle"_, enter the unique name of the asset on the field
 _"name of the new sprite"_, click on the top-left corner of the asset and click on the bottom-right
 corner of the asset. That's it. Change the name and repeat the process until no more assets left.
+Just to use the same terminology let's call each of these rectangles _Sprite_.
 When you are done go to the _"Details"_ section and enter the title of the map. Press on the
 _"Send changes to server and refresh map"_ button. Now you can download the map using _"Download map"_
 button.
+
+If you need to change an Sprite, add a new one or delete save the link for later usage.
+It will work unless you delete the _data_ directory you have set on _config.json_ file.
 
 
 [![Example of Phase 1](https://img.youtube.com/vi/d0-uBRhWkgw/0.jpg) Example of Phase 1](https://www.youtube.com/watch?v=d0-uBRhWkgw)
 
 ### Phase 2
 
+After you uncompress the zip file you'll see a directory with several files.
+You may change what file you want to get your view but it should be enogh to keep your changes only on _api.js_
+file. This file has a default implementation. You have access to window, document, leafletmap and jQuery.
 
+The main parts of the code you need to pay attention to are:
+
+
+_**loadElements** method_: This method is called each time your data need to be retrieved, it should return a _Promise_.
+The default implementation is a $.getJSON, but you may use another _Promise_ based method instead.
+
+```js
+rtMapAPI.prototype.loadElements = function() {
+	return $.getJSON('testdata.json'); /* note you may add a callback=? parameter to use JSONP */
+};
+```
+
+
+_**matches** method_: This method is called to check which of the elements downloaded using _loadElements_ method which _sprite_ represents it.
+```featureProperties.id``` is the name you have entered on each _sprite_ on phase 1 and _name_ is the attribute that should have the same value if the element is occupying that sprite.
+
+```js
+rtMapAPI.prototype.matches = function(element, featureProperties) {
+	return featureProperties.id === element.name;
+};
+```
+
+
+_**style** method_: This method sets for an _sprite_ how it should be drawn depending on which elements have been matched using the _matches_ method.
+
+```js
+rtMapAPI.prototype.style = function(elements){
+	return {
+		fillColor: (elements.length === 1 ? (elements[0].genero === 'hombre' ? '#4E2AFC' : '#FC4E2A') : '#FC4AE2'),
+		weight: 2,
+		opacity: elements.length === 0 ? 0 : 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: elements.length === 0 ? 0 : 0.01 * elements[0].edad
+	};
+};
+```
+
+_**getPopupText** method_: This method should return a text that is rendered like a tooltip text.
+
+```js
+rtMapAPI.prototype.getPopupText = function(elements){
+	return elements.map(function(element){
+		return element.name + ' ' + element.genero + ' <a href="#">' + element.edad + '</a>';
+	}).join(', ');
+};
+```
+
+_**setRefreshTimeout** method_: This method sets an interval of the time the map should ask for new updates.
+In practice when the timeout happens the _loadElements_ method is called and the sprites are re-styled.
+
+```js
+rtMapAPI.prototype.setRefreshTimeout = function(cb) {
+	setInterval(cb, 3000);
+};
+```
+
+_**ready** method_: This method runs when the map has been loaded before the data has been retrieved for the first time
+```js
+rtMapAPI.prototype.ready = function() {
+	
+};
+```
+
+_**setVisible** method_: This method is called to let you know which of the elements that _loadElements_
+method have downloaded have a _sprite_ that represents them.
+
+```js
+rtMapAPI.prototype.setVisible = function(elements){
+	this.elements = elements;
+};
+```
+
+
+As an example of what you may get after a properly configured _api.js_ file look this video:
+
+[![Example of a real map performance](https://img.youtube.com/vi/iFfwqODGM2o/0.jpg) Example of a real map performance](https://www.youtube.com/watch?v=iFfwqODGM2o)
 
 
 
 ## Copyright notes:
 
-
-This software uses a modified version of  gdal2tiles.py named gdal2tiles-leaflet, available under MIT license following this link: https://github.com/commenthol/gdal2tiles-leaflet This code belongs to:
+This software uses a modified version of  gdal2tiles.py named gdal2tiles-leaflet,
+available under MIT license following this link: https://github.com/commenthol/gdal2tiles-leaflet
+This code belongs to:
 * Copyright (c) 2008, Klokan Petr Pridal
 * Copyright (c) 2010-2013, Even Rouault
 
 
 This software is available under MIT license:
-* Copyright (c) 2017, FFIS
-
-Author: Loksly
+* Copyright (c) 2018, FFIS
+ 
+ Author: Loksly https://github.com/loksly/
