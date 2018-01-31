@@ -139,12 +139,12 @@ _**style** method_: This method sets for an _sprite_ how it should be drawn depe
 ```js
 rtMapAPI.prototype.style = function(elements){
 	return {
-		fillColor: (elements.length === 1 ? (elements[0].genero === 'hombre' ? '#4E2AFC' : '#FC4E2A') : '#FC4AE2'),
+		fillColor: (elements.length === 1 ? (elements[0].attr === 'specialValue' ? '#4E2AFC' : '#FC4E2A') : '#FC4AE2'),
 		weight: 2,
 		opacity: elements.length === 0 ? 0 : 1,
 		color: 'white',
 		dashArray: '3',
-		fillOpacity: elements.length === 0 ? 0 : 0.01 * elements[0].edad
+		fillOpacity: elements.length === 0 ? 0 : 0.01 * elements[0].mySpecialAttribute
 	};
 };
 ```
@@ -154,7 +154,7 @@ _**getPopupText** method_: This method should return a text that is rendered lik
 ```js
 rtMapAPI.prototype.getPopupText = function(elements){
 	return elements.map(function(element){
-		return element.name + ' ' + element.genero + ' <a href="#">' + element.edad + '</a>';
+		return element.name + ' ' + element.mySpecialAttributeDetails + ' <a href="#">' + element.mySpecialAttribute + '</a>';
 	}).join(', ');
 };
 ```

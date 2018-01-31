@@ -36,7 +36,7 @@ window.rtMapAPI = (function(window, jQuery){
 
 	//this function runs for each loaded element to know which of them belongs to which sprite
 	rtMapAPI.prototype.matches = function(element, featureProperties) {
-		return featureProperties.id === element.name; /* you should probably change "name" attribute to what it belongs */
+		return featureProperties.id === element.name; /* you should probably want to change "name" attribute to what it belongs */
 	};
 
 	//This method should return a text that is rendered like a tooltip text.
