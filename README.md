@@ -33,15 +33,14 @@ If vagrant version is too hard to deploy then try with the local version.
 
 ## Installation
 
+[![Installation process in video](https://img.youtube.com/vi/uhI4jy1_Hec/0.jpg)](https://www.youtube.com/watch?v=uhI4jy1_Hec)
+
 ```bash
 git clone https://github.com/ffis/rt-map
 cd rt-map
 npm install
 vim config.json  # config default port and datadir directory
-npm test
 ```
-
-If all the tests have passed then you may run the application.
 
 ## Run the application
 
