@@ -56,8 +56,8 @@ where config.json.port is the parameter you may have changed on _config.json_ fi
 
 ## Example of usage
 
-Let's image that we have an indoor map, for example a hospital service indoor map.
-What we want to do is see how it evolves the capacity or occupation over the time
+Let's imagine that we have an indoor map, for example a hospital service indoor map.
+What we want to do is see how evolves the capacity or occupation over the time
 or best say, in real time.
 
 ### What do we need?
@@ -76,6 +76,41 @@ We need:
   - unzip the downloaded file
   - configure the _api.js_ file
   - deploy using a lightweight web server
+
+### Before start requisites:
+
+* An indoor map in high resolution:
+
+[![Example of Phase 1](https://annieheatoncapstone.files.wordpress.com/2011/02/patient-room-floor.jpg) Example of an image that should work perfectly with this software](https://annieheatoncapstone.files.wordpress.com/2011/02/patient-room-floor.jpg)
+
+Note this image is not related to us and credit belongs to its owner.
+
+* A web service with real time information
+
+Here you may have an url that returns data in a web the browser can handle like _JSON_, _XML_ or _CSV_. For example, in _JSON_ it might look like this:
+```json
+[  
+    {  
+        "patient":{  
+            "name":"Loksly",
+            "fullname":"B. Loksly",
+            "gender":"male"
+        },
+        "room":"1A"
+    },
+    {  
+        "patient":{  
+            "name":"Diana",
+            "fullname":"D. Loksly",
+            "gender":"female"
+        },
+        "room":"1B"
+    }
+]
+```
+
+Note here the _"room"_ attribute is what you will need to match with the name of the assets you will enter in Phase 1.
+
 
 ### Phase 1
 
@@ -116,6 +151,7 @@ The main parts of the code you need to pay attention to are:
 
 _**loadElements** method_: This method is called each time your data need to be retrieved, it should return a _Promise_.
 The default implementation is a $.getJSON, but you may use another _Promise_ based method instead.
+The _Promise_ should return an array of objects.
 
 ```js
 rtMapAPI.prototype.loadElements = function() {
@@ -129,7 +165,7 @@ _**matches** method_: This method is called to check which of the elements downl
 
 ```js
 rtMapAPI.prototype.matches = function(element, featureProperties) {
-	return featureProperties.id === element.name;
+	return featureProperties.id === element.name; //you probably only want to change "name" to something different and keep the rest of the method as it is.
 };
 ```
 
