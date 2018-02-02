@@ -2,7 +2,7 @@
 
 Real time map manager.
 
-![RT-Map Explanation](./rt-map-explanation.png)
+![RT-Map Explanation](./rt-map-explanation.png?d=1)
 
 
 # Vagrant version 
