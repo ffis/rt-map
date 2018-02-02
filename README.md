@@ -2,6 +2,9 @@
 
 Real time map manager.
 
+![RT-Map Explanation](./rt-map-explanation.png)
+
+
 # Vagrant version 
 
 ## Prerequisites
