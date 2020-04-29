@@ -30,7 +30,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-fileupload": "^0.3.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "leaflet-rastercoords": "^1.0.2",
     "python-shell": "^0.4.0",
     "xml2js": "^0.4.19"
