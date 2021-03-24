@@ -13,6 +13,7 @@ git clone https://github.com/ffis/rt-map /vagrant/rt-map
 
 cd /vagrant/rt-map
 npm install
+npm run build
 mkdir -p /vagrant/rt-map/data
 
 node . &
